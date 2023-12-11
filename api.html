@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>final rewat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.css">
+</head>
+
+<body>
+    <div class="w3-top">
+        <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+            <a href="#home" class="w3-bar-item w3-button"><b>Rewat</b></a>
+            <div class="w3-right w3-hide-small">
+                <a href="index.html" class="w3-bar-item w3-button">index</a>
+                <a href="java.html" class="w3-bar-item w3-button">java</a>
+                <a href="api.html" class="w3-bar-item w3-button">api</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="w3-content w3-padding-64 w3-margin-top" style="max-width:1564px">
+        <h1>API</h1>
+
+        <h2>Click to get a Random Image</h2>
+        <div>
+            <img id="randomImage" src="https://source.unsplash.com/random/300x300" alt="Random Image">
+            <br>
+            <button onclick="getRandomImage()">Get Random</button>
+        </div>
+
+        <h2>Coinbase API</h2>
+        <div>
+            <div id="prices"></div>
+            <div id="lastUpdateTime"></div>
+        </div>
+
+        <form method="POST" action="https://script.google.com/macros/s/AKfycbxh6d2-WYIL_M78obqMiFqL9PkIp8Evi_Y6mVn0JW3jpTvAyekUNm3_OodfQVX0SAItjQ/exec">
+            <input name="Email" type="email" placeholder="Email" required>
+            <input name="Name" type="text" placeholder="Name" required>
+            <button type="submit">Send</button>
+        </form>
+
+        <div class="w3-center w3-padding-24">
+            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4dXufQES6sRr44pg_jLIOUnJa4FkuFLz7j261eBMcF76DZRXh6Z2WozVLTahmxav9LENciL2n4Fu_/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        </div>
+        <!-- End page content -->
+    </div>
+
+    <!-- info section -->
+    <section class="info_section">
+        <div class="container">
+            <div class="row">
+                <!-- Your content here -->
+            </div>
+        </div>
+    </section>
+    <!-- end info_section -->
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script>
+        $(".owl-carousel").owlCarousel({
+            loop: true,
+            margin: 0,
+            navText: [],
+            center: true,
+            autoplay: true,
+            autoplayHoverPause: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                1000: {
+                    items: 3
+                }
+            }
+        });
+    </script>
+
+    <script>
+        function getRandomImage() {
+            const randomNumber = Math.floor(Math.random() * 100);
+            const randomImageUrl = `https://source.unsplash.com/300x300/?random&${randomNumber}`;
+            document.getElementById("randomImage").src = randomImageUrl;
+        }
+
+        function fetchPrices() {
+            var now = new Date();
+            var currentTime = now.toLocaleTimeString();
+
+            fetch('https://api.coinbase.com/v2/exchange-rates?currency=USDT')
+                .then(response => response.json())
+                .then(data => {
+                    displayPrices(data);
+                    displayLastUpdateTime(currentTime);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    alert('Error fetching data. Please try again.');
+                });
+        }
+
+        function displayPrices(data) {
+            var pricesDiv = document.getElementById('prices');
+            var rates = data.data.rates;
+
+            var currencies = ['1INCH', 'AAVE', 'ABT', 'ACH', 'ACS', 'ADA', 'AED', 'BTC', 'ETH'];
+            var pricesHtml = '<p>1 USDT can buy : </p><ul>';
+
+            currencies.forEach(currency => {
+                if (rates[currency]) {
+                    pricesHtml += `<li>${currency} : ${rates[currency]}</li>`;
+                } else {
+                    pricesHtml += `<li>${currency} : N/A</li>`;
+                }
+            });
+
+            pricesHtml += '</ul>';
+            pricesDiv.innerHTML = pricesHtml;
+        }
+
+        function displayLastUpdateTime(currentTime) {
+            var updateTimeDiv = document.getElementById('lastUpdateTime');
+            updateTimeDiv.innerHTML = `<p>Last Update Time : ${currentTime}</p>`;
+        }
+
+        fetchPrices();
+
+        setInterval(fetchPrices, 3000);
+    </script>
+</body>
+</html>
